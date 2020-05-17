@@ -1,8 +1,12 @@
 import random
 from pydub import AudioSegment
 from pydub.playback import play
+import sys
+try:
+    stringy = sys.argv[1]
+except:
+    stringy = 'The quick brown fox jumps over the lazy dog.'
 
-stringy = 'The quick brown fox jumps over the lazy dog.'
 pitch = 'med' # choose between 'high', 'med', 'low', or 'lowest'
 
 stringy = stringy.lower()
@@ -45,7 +49,8 @@ for i, char in enumerate(stringy):
 
 combined_sounds = None
 
-print(len(infiles))
+print("Length of the files used to create final file: "+str(len(infiles)))
+
 for index,sound in enumerate(infiles):
 	tempsound = AudioSegment.from_wav(sound)
 	if stringy[len(stringy)-1] == '?':
@@ -59,6 +64,9 @@ for index,sound in enumerate(infiles):
 	new_sound = tempsound._spawn(tempsound.raw_data, overrides={'frame_rate': new_sample_rate})
 	new_sound = new_sound.set_frame_rate(44100) # set uniform sample rate
 	combined_sounds = new_sound if combined_sounds is None else combined_sounds + new_sound
-
-
-combined_sounds.export("./sound.wav", format="wav")
+try:
+    combined_sounds.export("./sound.wav", format="wav")
+    print ("Created sound.wav")
+except Exception as ExMsg:
+    print ("Couldn't create sound.wav!")
+    print (str(ExMsg))
